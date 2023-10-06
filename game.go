@@ -24,3 +24,12 @@ type Gopher struct {
 	Intellect int
 	Coins     int
 }
+
+type Action interface {
+	Attack()
+	BuyItem(Item string)
+	UseItem(Item string)
+	Work()
+	train(Skill string)
+	ExitGame()
+}
