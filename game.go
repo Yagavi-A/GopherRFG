@@ -33,7 +33,7 @@ type Consummable struct {
 }
 
 type Gopher struct {
-	Name string
+	Name      string
 	Hitpoints int
 	Weapon    Weapon
 	Inventory []Consummable
@@ -47,34 +47,56 @@ func ExitGame() string {
 	return "Game Over"
 }
 
-//Attack
-func (player Gopher) Attack(opponent Gopher) Gopher{
+// Attack
+func (player Gopher) Attack(opponent Gopher) Gopher {
 	fmt.Println(player.Name, " Attacked ", opponent.Name)
 	leastDamage := player.Weapon.Damage[0]
 	highestDamage := player.Weapon.Damage[1]
-	damageCaused := rand.Intn(highestDamage - leastDamage + 1) + leastDamage
+	damageCaused := rand.Intn(highestDamage-leastDamage+1) + leastDamage
 	opponent.Hitpoints -= damageCaused
 	return opponent
+
 }
 
-//Work
-func (player Gopher) Work() {
-	fmt.Println("Work here")
+// Work
+func (player Gopher) Work() Gopher {
+	coinsEarned := rand.Intn(11) + 5
+	player.Coins += coinsEarned
+	fmt.Printf("%s worked and earned %d coins \n", player.Name, coinsEarned)
+	return player
 }
 
-//Buy
+// Buy
 func (player Gopher) Buy(item string, weapons map[string]Weapon, consummables map[string]Consummable) {
 	fmt.Println("Buy here")
 }
 
-//Use
+// Use
 func (player Gopher) Use(item string, consummables map[string]Consummable) {
 	fmt.Println("Use here")
 }
 
-//Train
-func (player Gopher) Train(item string) {
+// Train
+func (player Gopher) Train(skill string) {
 	fmt.Println("Train here")
+	if player.Coins < 5 {
+		fmt.Println("Not enough coins")
+		return
+	}
+
+	switch strings.ToLower(skill) {
+	case "strength":
+		player.Strength += 2
+	case "agility":
+		player.Strength += 2
+	case "intellect":
+		player.Intellect += 2
+	default:
+		fmt.Println("Invalid skill")
+		return
+	}
+	player.Coins -= 5
+	fmt.Printf("%s trained in %s and increased %s by 2.\n", player.Name, skill, skill)
 }
 
 func main() {
@@ -161,14 +183,14 @@ func main() {
 
 	//2 players
 	player1 := Gopher{
-		Name: "PLAYER>1",
+		Name:      "PLAYER>1",
 		Hitpoints: 3,
-		Coins: 20,
+		Coins:     20,
 		Inventory: []Consummable{},
-		Strength: 0,
-		Agility: 0,
+		Strength:  0,
+		Agility:   0,
 		Intellect: 0,
-		Weapon: Weapons["hand"],
+		Weapon:    Weapons["hand"],
 	}
 
 	player2 := player1
@@ -182,49 +204,51 @@ func main() {
 			fmt.Println(ExitGame())
 			break
 		} else {
-			if turn % 2 == 0 {
+			if turn%2 == 0 {
 				action := strings.Split(command, " ")
-				if(len(action) == 1) {
-					if(action[0] == "attack"){
+				if len(action) == 1 {
+					if action[0] == "attack" {
 						player2 = player1.Attack(player2)
-						if player2.Hitpoints  <= 0 {
-							ExitGame()
+						if player2.Hitpoints <= 0 {
+							fmt.Println(ExitGame())
+							break
 						}
 					}
-					if(action[0] == "work"){
-						player1.Work()
+					if action[0] == "work" {
+						player1 = player1.Work()
 					}
-				}else {
-					if(action[0] == "buy"){
+				} else {
+					if action[0] == "buy" {
 						player1.Buy(action[1], Weapons, Consummables)
 					}
-					if(action[0] == "use"){
+					if action[0] == "use" {
 						player1.Use(action[1], Consummables)
 					}
-					if(action[0] == "train"){
+					if action[0] == "train" {
 						player1.Train(action[1])
 					}
 				}
-			}else {
+			} else {
 				action := strings.Split(command, " ")
-				if(len(action) == 1) {
-					if(action[0] == "attack"){
+				if len(action) == 1 {
+					if action[0] == "attack" {
 						player1 = player2.Attack(player1)
-						if player1.Hitpoints  <= 0 {
-							ExitGame()
+						if player1.Hitpoints <= 0 {
+							fmt.Println(ExitGame())
+							break
 						}
 					}
-					if(action[0] == "work"){
-						player2.Work()
+					if action[0] == "work" {
+						player2 = player2.Work()
 					}
-				}else {
-					if(action[0] == "buy"){
+				} else {
+					if action[0] == "buy" {
 						player2.Buy(action[1], Weapons, Consummables)
 					}
-					if(action[0] == "use"){
+					if action[0] == "use" {
 						player2.Use(action[1], Consummables)
 					}
-					if(action[0] == "train"){
+					if action[0] == "train" {
 						player2.Train(action[1])
 					}
 				}
