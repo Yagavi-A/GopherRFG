@@ -2,6 +2,15 @@ package main
 
 import "math"
 
+type Action interface {
+	Attack()
+	BuyItem(Item string)
+	UseItem(Item string)
+	Work()
+	train(Skill string)
+	ExitGame()
+}
+
 type Weapon struct {
 	Damage          [2]int
 	StrengthReq     int
