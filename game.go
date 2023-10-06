@@ -12,8 +12,8 @@ import (
 type Action interface {
 	Attack(opponent Gopher)
 	Work()
-	Buy(item string, weapons map[string]Weapon, consumables map[string]Consummable)
-	Use(Item string, consumables map[string]Consummable)
+	Buy(item string, weapons map[string]Weapon, consumables map[string]Consumable)
+	Use(Item string, consumables map[string]Consumable)
 	Train(skill string)
 }
 
@@ -25,7 +25,7 @@ type Weapon struct {
 	CoinsReq        int
 }
 
-type Consummable struct {
+type Consumable struct {
 	Duration        int
 	HitPointEffect  int
 	StrengthEffect  int
@@ -38,7 +38,7 @@ type Gopher struct {
 	Name      string
 	Hitpoints int
 	Weapon    Weapon
-	Inventory []Consummable
+	Inventory []Consumable
 	Strength  int
 	Agility   int
 	Intellect int
@@ -69,12 +69,39 @@ func (player Gopher) Work() Gopher {
 }
 
 // Buy
-func (player Gopher) Buy(item string, weapons map[string]Weapon, consummables map[string]Consummable) {
-	fmt.Println("Buy here")
+func (player Gopher) Buy(item string, weapons map[string]Weapon, consumables map[string]Consumable) Gopher{
+	item = strings.TrimSpace(item)
+	if value, exists := weapons[item]; exists {
+        fmt.Printf("%s exists in the weapons, and its value is %d\n", item, value)
+		if player.Coins >= value.CoinsReq && player.Strength >= value.StrengthReq && player.Agility >= value.AgilityReq &&
+			player.Intellect >= value.IntelligenceReq {
+				player.Weapon = value
+				player.Coins -= value.CoinsReq
+
+		} else {
+			fmt.Println("Cant buy weapon")
+		}
+		return player
+    }
+
+	if value, exists := consumables[item]; exists {
+		fmt.Printf("%s exists in the consumables, and its value is %d\n", item, value)
+		if player.Coins >= value.CoinsReq {
+			player.Coins -= value.CoinsReq
+			player.Inventory = append(player.Inventory, value)
+		} else {
+			fmt.Println("Cant buy consumable")
+		}
+		return player
+	}
+
+
+	fmt.Println("Invalid Operation / Command")
+	return player
 }
 
 // Use
-func (player Gopher) Use(item string, consummables map[string]Consummable) {
+func (player Gopher) Use(item string, consummables map[string]Consumable) {
 	fmt.Println("Use here")
 }
 
@@ -151,16 +178,16 @@ func main() {
 	}
 
 	//Consumables
-	Consummables := make(map[string]Consummable)
-	Consummables["health_potion"] = Consummable{
+	Consummables := make(map[string]Consumable)
+	Consummables["health_potion"] = Consumable{
 		CoinsReq:        5,
 		HitPointEffect:  5,
-		Duration:        math.MaxInt64,
+		Duration:        math.MaxInt32,
 		StrengthEffect:  0,
 		AgilityEffect:   0,
 		IntellectEffect: 0,
 	}
-	Consummables["strength_potion"] = Consummable{
+	Consummables["strength_potion"] = Consumable{
 		CoinsReq:        10,
 		HitPointEffect:  0,
 		Duration:        3,
@@ -168,7 +195,7 @@ func main() {
 		AgilityEffect:   0,
 		IntellectEffect: 0,
 	}
-	Consummables["agility_potion"] = Consummable{
+	Consummables["agility_potion"] = Consumable{
 		CoinsReq:        10,
 		HitPointEffect:  0,
 		Duration:        3,
@@ -176,7 +203,7 @@ func main() {
 		AgilityEffect:   3,
 		IntellectEffect: 0,
 	}
-	Consummables["intellect_potion"] = Consummable{
+	Consummables["intellect_potion"] = Consumable{
 		CoinsReq:        10,
 		HitPointEffect:  0,
 		Duration:        3,
@@ -190,7 +217,7 @@ func main() {
 		Name:      "PLAYER>1",
 		Hitpoints: 3,
 		Coins:     20,
-		Inventory: []Consummable{},
+		Inventory: []Consumable{},
 		Strength:  0,
 		Agility:   0,
 		Intellect: 0,
@@ -211,6 +238,7 @@ func main() {
 			if turn%2 == 0 {
 				action := strings.Split(command, " ")
 				if len(action) == 1 {
+					action[0] = strings.TrimSpace(action[0])
 					if action[0] == "attack" {
 						player2 = player1.Attack(player2)
 						if player2.Hitpoints <= 0 {
@@ -223,7 +251,7 @@ func main() {
 					}
 				} else {
 					if action[0] == "buy" {
-						player1.Buy(action[1], Weapons, Consummables)
+						player1 = player1.Buy(action[1], Weapons, Consummables)
 					}
 					if action[0] == "use" {
 						player1.Use(action[1], Consummables)
@@ -235,6 +263,7 @@ func main() {
 			} else {
 				action := strings.Split(command, " ")
 				if len(action) == 1 {
+					action[0] = strings.TrimSpace(action[0])
 					if action[0] == "attack" {
 						player1 = player2.Attack(player1)
 						if player1.Hitpoints <= 0 {
@@ -247,7 +276,7 @@ func main() {
 					}
 				} else {
 					if action[0] == "buy" {
-						player2.Buy(action[1], Weapons, Consummables)
+						player2 = player2.Buy(action[1], Weapons, Consummables)
 					}
 					if action[0] == "use" {
 						player2.Use(action[1], Consummables)
@@ -260,5 +289,4 @@ func main() {
 			turn++
 		}
 	}
-
 }
