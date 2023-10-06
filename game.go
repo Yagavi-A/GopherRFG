@@ -127,35 +127,35 @@ func main() {
 	//Consumables
 	Consummables := make(map[string]Consummable)
 	Consummables["health_potion"] = Consummable{
-		CoinsReq:       5,
-		HitPointEffect: 5,
-		Duration:       math.MaxInt64,
-		StrengthEffect: 0,
-		AgilityEffect: 0,
+		CoinsReq:        5,
+		HitPointEffect:  5,
+		Duration:        math.MaxInt64,
+		StrengthEffect:  0,
+		AgilityEffect:   0,
 		IntellectEffect: 0,
 	}
 	Consummables["strength_potion"] = Consummable{
-		CoinsReq:       10,
-		HitPointEffect: 0,
-		Duration:       3,
-		StrengthEffect: 3,
-		AgilityEffect: 0,
+		CoinsReq:        10,
+		HitPointEffect:  0,
+		Duration:        3,
+		StrengthEffect:  3,
+		AgilityEffect:   0,
 		IntellectEffect: 0,
 	}
 	Consummables["agility_potion"] = Consummable{
-		CoinsReq:       10,
-		HitPointEffect: 0,
-		Duration:       3,
-		StrengthEffect: 0,
-		AgilityEffect: 3,
+		CoinsReq:        10,
+		HitPointEffect:  0,
+		Duration:        3,
+		StrengthEffect:  0,
+		AgilityEffect:   3,
 		IntellectEffect: 0,
 	}
 	Consummables["intellect_potion"] = Consummable{
-		CoinsReq:       10,
-		HitPointEffect: 0,
-		Duration:       3,
-		StrengthEffect: 0,
-		AgilityEffect: 0,
+		CoinsReq:        10,
+		HitPointEffect:  0,
+		Duration:        3,
+		StrengthEffect:  0,
+		AgilityEffect:   0,
 		IntellectEffect: 3,
 	}
 
