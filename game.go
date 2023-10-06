@@ -253,7 +253,7 @@ func main() {
 						player2.Use(action[1], Consummables)
 					}
 					if action[0] == "train" {
-						player2.Train(action[1])
+						player2 = player2.Train(action[1])
 					}
 				}
 			}
