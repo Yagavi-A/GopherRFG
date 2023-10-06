@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"math"
 	"math/rand"
+	"os"
 	"strings"
 )
 
@@ -77,29 +79,31 @@ func (player Gopher) Use(item string, consummables map[string]Consummable) {
 }
 
 // Train
-func (player Gopher) Train(skill string) {
-	fmt.Println("Train here")
+func (player Gopher) Train(skill string) Gopher {
+	skill = strings.TrimSpace(skill)
 	if player.Coins < 5 {
 		fmt.Println("Not enough coins")
-		return
+		return player
 	}
 
-	switch strings.ToLower(skill) {
-	case "strength":
+	if skill == "strength" {
 		player.Strength += 2
-	case "agility":
-		player.Strength += 2
-	case "intellect":
+	} else if skill == "agility" {
+		player.Agility += 2
+	} else if skill == "intellect" {
 		player.Intellect += 2
-	default:
+	} else {
 		fmt.Println("Invalid skill")
-		return
 	}
+
 	player.Coins -= 5
-	fmt.Printf("%s trained in %s and increased %s by 2.\n", player.Name, skill, skill)
+	fmt.Printf("%s trained in %s and increased from %s to 2.\n", player.Name, skill, skill)
+	return player
 }
 
 func main() {
+
+	reader := bufio.NewReader(os.Stdin)
 
 	//Weapons
 	Weapons := make(map[string]Weapon)
@@ -199,7 +203,7 @@ func main() {
 	var command string
 	var turn int = 0
 	for {
-		fmt.Scanln(&command)
+		command, _ = reader.ReadString('\n')
 		if command == "exit" {
 			fmt.Println(ExitGame())
 			break
@@ -225,7 +229,7 @@ func main() {
 						player1.Use(action[1], Consummables)
 					}
 					if action[0] == "train" {
-						player1.Train(action[1])
+						player1 = player1.Train(action[1])
 					}
 				}
 			} else {
